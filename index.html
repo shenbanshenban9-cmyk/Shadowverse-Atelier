@@ -1,0 +1,678 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>影之工坊</title><style>
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0,#253d4d,#101e2a 48%,#09121c);color:#eee6d5;font:16px "Microsoft YaHei",sans-serif;min-height:100vh}header,main{max-width:1400px;margin:auto;padding:28px 5vw}header{display:flex;align-items:center;gap:20px;border-bottom:1px solid #96876755;letter-spacing:.2em;color:#d8bb80}button,input:not([type=range]),select{font:inherit;color:inherit;background:#192c3b;border:1px solid #85765788;border-radius:4px;padding:9px 15px}button{cursor:pointer;transition:transform .2s,border-color .2s,background .2s}button:hover{border-color:#e9c680;transform:translateY(-2px);background-color:#294558}h1,h2,.tile{font-family:"STKaiti","KaiTi",serif}h1{font-size:clamp(38px,5vw,72px);font-weight:500;margin:26px 0 38px;letter-spacing:.08em}small{color:#b6a784}section{animation:rise .35s ease-out}@keyframes rise{from{opacity:.3;transform:translateY(8px)}}.home,.grid,.slots{display:grid;gap:16px}.home{grid-template-columns:repeat(2,1fr)}.tile{background-size:cover;background-position:center;text-align:left;height:175px;padding:32px;font-size:35px;color:#f6e6c8;border:1px solid #a99871}.grid{grid-template-columns:repeat(auto-fill,minmax(225px,1fr));margin:22px 0}.card,.slot{text-align:left;padding:0;overflow:hidden}.card img,.slot img{width:100%;display:block;object-fit:cover}.card img{height:auto;aspect-ratio:5;object-fit:fill}.card b,.slot b{display:block;padding:12px}.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.slots{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}.slot img{height:170px;object-fit:contain;background:#0b1722}.apply{position:sticky;bottom:12px;margin:24px 0 0 auto;display:block;background:#927147;color:white}dialog{background:#172b39;color:#eee4d1;border:1px solid #968459;max-width:90vw}dialog::backdrop{background:#060b11cc}canvas{display:block;max-width:76vw;touch-action:none;cursor:grab}label{display:inline-block;padding:5px}input[type=checkbox]{accent-color:#ba9b65}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.compare figure{margin:0}.compare figcaption{margin:0 0 8px;color:#ddc591}.pane{width:min(32vw,32vh,330px);aspect-ratio:848/1024;display:block;background:#0a1721;overflow:hidden}.pane img,.pane canvas{width:100%;height:100%;display:block}.addart{width:100%;height:100%;font-size:52px;border-style:dashed;color:#dec497}.slot[disabled]{cursor:default;transform:none;opacity:1}.triple{grid-template-columns:repeat(3,minmax(0,1fr))}.triple .pane{width:min(24vw,45vh,320px)}.triple.withField{grid-template-columns:repeat(3,minmax(0,1fr)) minmax(150px,.85fr)}.withField .pane{width:min(18vw,42vh,300px)}.fieldPanel canvas{width:100%;max-width:240px;background:#0a1721;touch-action:none}.fieldPanel input{width:95%}.fieldPanel h3{margin-top:0}@media(max-width:780px){.triple.withField{grid-template-columns:repeat(2,1fr)}.withField .pane{width:min(35vw,240px)}}.voice-scroll{overflow-x:auto}.voice-columns{display:grid;grid-template-columns:repeat(5,minmax(174px,1fr));gap:14px}.voice-columns h3{color:#dec497}.voice-columns audio{display:block;width:100%;margin:8px 0 18px}.fieldPanel button{padding:7px 8px}.fieldPanel p{display:flex;gap:4px;flex-wrap:wrap}.stage-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}.stage-grid img{width:100%;display:block}.stage-grid button{padding:0 0 10px;overflow:hidden}.stage-work{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px}.stage-work img,.stage-work canvas{width:100%;height:250px;object-fit:contain;background:#0a1721}.stage-work canvas{touch-action:none}.stage-toolbar{margin:18px 0}.stage-toolbar select{max-width:100%}input[type=range]{padding:0;border:0;background:transparent;vertical-align:middle}.voice-wave{width:100%;height:76px;background:#0a1721;border:1px solid #49616d;border-radius:6px;display:block}.voice-tools{margin:8px 0 22px}.voice-tools label{display:flex;align-items:center;gap:7px;font-size:14px}.voice-tools input{min-width:0;flex:1}.voice-tools output{min-width:42px}.voice-tools button{padding:7px 10px;font-size:14px}.voice-status{font-size:12px;min-height:18px;color:#ddc591}
+:root{--ink:#101b1c;--paper:#eee9db;--gold:#d7b984;--edge:#9d906456;color-scheme:dark}
+body{background:#101b1c;color:var(--paper);isolation:isolate}body:before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(115deg,#0b1619d9,#182829ba 65%,#13191bd9),var(--wall,url(wallpaper)) center/cover,linear-gradient(130deg,#314544,#152325)}
+header,main{max-width:1550px;padding-inline:clamp(20px,5vw,78px)}header{font-family:Georgia,SimSun,serif;border-color:var(--edge);padding-block:19px}header small{margin-left:auto;font:11px Georgia;letter-spacing:.25em;color:var(--gold)}
+h1,h2,h3,.tile{font-family:Georgia,"Songti SC",SimSun,serif}h1{font-weight:400;letter-spacing:.045em;font-size:clamp(42px,5.5vw,86px);margin:30px 0}h2{color:#eadcc0}
+button,select,input:not([type=range]){background-color:#172829;border-color:var(--edge);border-radius:6px}button:hover{background-color:#29403e;border-color:var(--gold)}button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.home{grid-template-columns:1.8fr 1fr 1fr;gap:14px}.home .tile{display:flex;align-items:flex-end;height:clamp(240px,43vh,460px);background-position:center;background-size:cover;color:white;text-shadow:0 2px 14px #000;padding:30px;border-color:var(--edge);font-size:clamp(28px,3vw,48px)}
+.card,.slot,.stage-grid button{background:#142425;border-color:var(--edge)}.card b,.slot b{font-weight:500}.bar,.stage-toolbar{padding:14px 0;border-block:1px solid var(--edge)}.apply{background:#d7b984;color:#182321;font-weight:650}.apply:disabled{opacity:.5}dialog{color:var(--paper);background:#142426;border-color:#99865e;padding:clamp(16px,2vw,32px);border-radius:10px;box-shadow:0 24px 90px #0008}dialog::backdrop{background:#061012bc;backdrop-filter:blur(5px)}fieldset{border:0;border-top:1px solid var(--edge);padding:12px 0;margin:8px 0}legend{color:var(--gold);padding-right:12px}.voice-tools,.fieldPanel{background:#132122;padding:12px;border-radius:6px}.voice-wave{background:#0d1919}.voice-columns h3{border-bottom:1px solid var(--edge);padding-bottom:10px}input[type=range]{accent-color:var(--gold)}
+@media(max-width:700px){.home{grid-template-columns:1fr 1fr}.home .tile:first-child{grid-column:1/-1}.home .tile{height:150px}.home .tile:first-child{height:220px}header small{font-size:9px}.voice-columns{width:max-content;grid-template-columns:repeat(5,190px)}}
+
+:root{color-scheme:light;--ink:#12151c;--paper:#161920;--gold:#244aff;--edge:#c9cdd5}body{color:#151821;background:#fafafa;font-family:Arial,"Microsoft YaHei",sans-serif}body:before{background:linear-gradient(100deg,#fffffff2,#ffffffd9),var(--wall,url(wallpaper)) center/cover,#fafafa}
+header{position:sticky;top:0;z-index:60;font:bold 16px Arial,sans-serif;border-bottom:0;background:#fff}#veil{position:fixed;left:0;right:0;top:0;height:calc(var(--hh,81px) + 76px);z-index:50;pointer-events:none;opacity:0;transition:opacity .3s ease;background:linear-gradient(#fff 0,#fff calc(var(--hh,81px) + 10px),rgba(255,255,255,.88) calc(var(--hh,81px) + 22px),rgba(255,255,255,.58) calc(var(--hh,81px) + 40px),rgba(255,255,255,.28) calc(var(--hh,81px) + 56px),rgba(255,255,255,.08) calc(var(--hh,81px) + 68px),rgba(255,255,255,0) calc(var(--hh,81px) + 76px))}#veil.on{opacity:1}header small,small,.voice-columns h3,.voice-status,.compare figcaption,legend{color:#244aff}header small,.hero-copy small{font:600 12px Consolas,monospace;letter-spacing:.15em}
+h1,h2,h3,.tile{font-family:Impact,"Microsoft YaHei",sans-serif;font-weight:850;letter-spacing:-.045em;color:#101319}button,select,input:not([type=range]),.card,.slot,.stage-grid button{color:#131722;background-color:#fff;border-color:#c6cbd3}button:hover,.card:hover,.slot:hover{color:#163cdc;background-color:#eff2ff;border-color:#244aff}.apply,.hero-copy nav button:first-child{background:#244aff;color:white}.bar,.stage-toolbar,fieldset{border-color:#c3c8d2}dialog{background:#fafbfc;color:#141821;border:1px solid #aeb8cf;border-radius:14px}dialog h2{color:#101319}.voice-tools,.fieldPanel{background:#eef1f6}.voice-wave{background:#17233b}.pane,.addart{background:#e4eaf1;color:#244aff}.card b,.slot b{font-weight:650}.orbital{position:relative;display:grid;grid-template-columns:1fr 1.05fr;align-items:center;min-height:clamp(420px,62vh,760px);overflow:hidden;border-bottom:1px solid #91a8ff}.orbital:after{content:"";position:absolute;bottom:-48px;left:-8%;width:116%;height:68px;border-radius:50%;background:#fff;box-shadow:0 -6px 26px #335dff88;pointer-events:none}.hero-copy{z-index:1;padding:24px 0 48px}.hero-copy h1{font-size:clamp(84px,8.8vw,164px);line-height:.99;margin:18px 0 30px;animation:expose .6s steps(5,end)}@keyframes expose{0%{opacity:.1;text-shadow:8px 0 #3155ff;transform:translateX(-5px)}65%{text-shadow:-3px 0 #3155ff}100%{opacity:1;text-shadow:none}}.hero-copy nav{display:flex;gap:10px}.hero-copy button,header button,.bar button,.stage-toolbar button{border-radius:50px}.orbital canvas{width:100%;height:clamp(320px,56vh,660px);max-width:100%;pointer-events:none}.atlas{margin-top:24px;grid-template-columns:2fr 1fr 1fr}.atlas .tile{height:clamp(160px,21vh,260px);border-radius:4px;color:white;font-size:32px}.atlas .tile:hover{color:white;box-shadow:0 4px 0 #244aff}
+@media(max-width:650px){.orbital{grid-template-columns:1.1fr .9fr;min-height:320px}.orbital canvas{height:230px}.hero-copy h1{font-size:clamp(66px,16vw,100px)}.hero-copy nav{flex-wrap:wrap}.atlas{grid-template-columns:1fr 1fr}.atlas .tile:first-child{grid-column:1/-1}.hero-copy small{font-size:9px}.atlas .tile{height:125px}}
+@media(prefers-reduced-motion:reduce){.hero-copy h1{animation:none}}
+#leaderHero{position:relative;width:100%;height:clamp(350px,58vh,680px);mask-image:linear-gradient(black 70%,transparent 100%)}#leaderHero canvas{width:100%;height:100%;max-width:none}.atlas .tile{background-position:center 31%;background-size:cover}.atlas .tile:nth-child(2){background-position:center}.atlas .tile:nth-child(3){background-position:center 34%}.atlas .tile:first-child{background-image:url(card-cover);background-position:center 30%}#leaderHero{justify-self:center;align-self:center;width:min(100%,80vh);height:auto;aspect-ratio:620/415;overflow:hidden;mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)}#leaderHero:after{content:"";position:absolute;inset:80% 0 0;pointer-events:none;backdrop-filter:blur(5px);mask-image:linear-gradient(transparent,#000 80%)}#leaderHero .spine-player,#leaderHero canvas{position:absolute;inset:0;width:100%;height:100%}body:before{background:var(--wall,url(wallpaper)) var(--wall-x,50%) var(--wall-y,50%)/cover no-repeat;opacity:var(--wall-opacity,.1);pointer-events:none}.wall-control{display:grid;grid-template-columns:5em 1fr 4em;align-items:center;gap:10px}.wall-control output{text-align:right}
+html,body{background:#fff}body:before{display:none!important}
+.library-layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:30px;align-items:start}
+.filter-sidebar.floating{position:fixed;z-index:5;margin:0}
+.filter-sidebar{position:sticky;top:calc(var(--hh,81px) + 84px);max-height:calc(100vh - var(--hh,81px) - 100px);overflow-y:auto;overscroll-behavior:contain;padding:0 20px 12px 0;border-right:1px solid #d9dde5;scrollbar-width:thin}
+.filter-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.filter-heading h2{font-size:20px;margin:0}.filter-heading button{font-size:12px;padding:6px 12px}
+.filter-sidebar fieldset{padding:12px 0;margin:0 0 10px;border-top:1px solid #d9dde5;min-width:0}.filter-sidebar legend{font-size:13px;font-weight:650;color:#596174}
+.filter-sidebar label{display:flex;align-items:center;gap:7px;padding:6px 0;font-size:13px;line-height:1.4;cursor:pointer}.filter-sidebar input{margin:0;flex-shrink:0;accent-color:#244aff}
+.filter-sidebar fieldset:first-of-type label{display:inline-flex;margin-right:10px}
+.library-results{grid-column:2;min-width:0}.library-results .bar{margin:0}.library-results .grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}.library-results .bar input{width:min(100%,340px)}
+@media(max-width:720px){.library-layout{grid-template-columns:155px minmax(0,1fr);gap:14px}.filter-sidebar{padding-right:10px}.filter-sidebar label{font-size:12px}.library-results .grid{grid-template-columns:minmax(0,1fr)}}
+
+.home.atlas{grid-template-columns:1fr 1fr;gap:20px}.home.atlas .tile{grid-column:auto;height:clamp(160px,23vh,245px);padding:25px 30px}.home.atlas .tile:first-child{background-image:linear-gradient(0deg,#10141dee,transparent 80%),url(card-cover)}.orbital{min-height:clamp(360px,56vh,660px);border-bottom:0}.orbital:after{height:32px;bottom:-25px;box-shadow:0 -4px 20px #335dff44}.hero-copy h1{animation:none}.hero-copy{padding-bottom:28px}
+@media(max-width:650px){.home.atlas{gap:12px}.home.atlas .tile{height:150px;padding:16px;font-size:26px}}
+.directory-row{display:flex;align-items:center;gap:10px;width:min(72vw,680px);margin-top:6px}.directory-row input{flex:1;min-width:0}.directory-row button{flex:none;white-space:nowrap}
+.compare.triple.withField{grid-template-columns:repeat(3,minmax(0,1fr)) minmax(420px,1.8fr);gap:18px;align-items:start}.withField .pane{width:100%;max-width:280px}.field-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.field-state{min-width:0}.field-state h4{margin:0 0 9px;font-size:15px}.field-state canvas{width:100%;aspect-ratio:1;max-width:none}.field-state label{display:block;padding:8px 0;font-size:12px}.field-state input{width:100%}.field-state button{font-size:12px;padding:6px}.field-status{font-size:12px;line-height:1.5;color:#244aff}.restore-face{margin-top:12px;font-size:14px}
+@media(max-width:1100px){.compare.triple.withField{grid-template-columns:repeat(3,minmax(0,1fr))}.triple.withField .fieldPanel{grid-column:1/-1}.field-state canvas{max-width:210px}.withField .pane{width:100%}}
+.card-title{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin-bottom:20px}.card-title h1{margin-bottom:0}.card-title button{white-space:nowrap}.variant-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}.variant-choices button{text-align:left;padding:10px}.variant-choices img{display:block;width:100%;aspect-ratio:848/1024;object-fit:fill;margin-bottom:10px}.filter-sidebar .variant-filter{align-items:flex-start;padding:12px 0 16px;font-weight:600}.variant-filter input{margin-top:3px} .word-depth{position:absolute;inset:0 -30px;pointer-events:none;display:flex;align-items:center;transition:transform .25s ease-out;color:rgba(56,75,127,.115);mask-image:linear-gradient(#000 45%,transparent 84%)}
+.word-depth::after{content:"";position:absolute;inset:50% 0 0;backdrop-filter:blur(4px);mask-image:linear-gradient(transparent,#000 65%)}
+.word-track{display:flex;width:max-content;flex:none;animation:word-scroll 70s linear infinite;font:900 clamp(170px,25vw,500px)/1 Arial,"Segoe UI",sans-serif;letter-spacing:-.065em;white-space:nowrap}
+.word-track span{padding-right:.22em}#leaderHero{z-index:1}
+@keyframes word-scroll{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.word-track{animation:none}}
+.transfer-panel{margin:18px 0;padding:15px 0;border-block:1px solid #d1d7e3}.transfer-panel fieldset{margin-bottom:12px}.pack-actions{display:flex;gap:8px;flex-wrap:wrap}.transfer-panel progress{width:100%;margin-top:12px;accent-color:#244aff}.transfer-panel p{font-size:14px}
+.entry-loading[open]{display:flex;align-items:center;gap:14px;width:auto;padding:24px 32px}.entry-loading span{width:24px;height:24px;border:3px solid #dde3ff;border-top-color:#244aff;border-radius:50%;animation:entry-spin .8s linear infinite}@keyframes entry-spin{to{transform:rotate(360deg)}}
+.card-actions{justify-content:flex-start;flex-wrap:wrap;display:flex;align-items:center;gap:8px;white-space:nowrap}#usageGuide{width:min(650px,90vw);padding:0}#usageGuide article{padding:24px 32px;max-height:65vh;overflow:auto;line-height:1.65}#usageGuide h2{margin-top:0}#usageGuide h3{margin-bottom:.4em}#usageGuide article:focus{outline:none}#usageGuide footer{position:relative;display:flex;align-items:center;justify-content:space-between;padding:14px 26px;border:0}#usageGuide footer::before{content:"";position:absolute;bottom:100%;left:0;right:18px;height:30px;pointer-events:none;background:linear-gradient(transparent,#f8fafc);backdrop-filter:blur(3px);mask-image:linear-gradient(transparent,#000);opacity:0}#usageGuide.more footer::before{opacity:1}#usageGuide footer label{display:flex;align-items:center;gap:6px}#usageGuide input{width:auto}.orbital:has(.particle-title){overflow:visible}.orbital .word-depth{inset:0;overflow:hidden}.particle-title{position:relative;width:max-content}.orbital .particle-title canvas{position:absolute;left:-64px;top:-64px;width:calc(100% + 128px);height:calc(100% + 128px);max-width:none}.particle-title.particles-ready{color:transparent;width:2.08em;height:2.06em;white-space:nowrap;font-family:sans-serif;font-weight:800;text-indent:-999em}</style><link rel="stylesheet" href="spine-player.min.css"><script src="spine-player.min.js"></script><header><button onclick="back()">‹ 返回</button>影之工坊 <small>SHADOWVERSE ATELIER</small></header><div id="veil" aria-hidden="true"><b></b></div><main></main><dialog id="modal"></dialog><script src="background.js"></script><script src="field.js"></script><script src="foil.js"></script><script src="voice.js"></script><script>
+const main=document.querySelector('main'),modal=document.querySelector('dialog');let cards=[],page=0,view='',idx=0,changes={},search='',filters=[[],[],[],[],[],[]],slots=[],urls={};const cats=['卡牌','背景'],groups=[['0','1','2','3','4','5','6','7','8+'],['随从','法术','护符'],['中立','精灵','皇家护卫','巫师','龙族','梦魔','主教','超越者'],['铜卡','银卡','金卡','虹卡']];const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');const nocache=u=>u+'&t='+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+function transferPanel(single=null){
+ const section=document.createElement('section');
+ section.className='transfer-panel';
+ section.innerHTML=(single===null?'<h3>更改管理</h3><fieldset><legend>导出或还原范围</legend><label><input type="checkbox" value="cards" checked>卡牌</label> <label><input type="checkbox" value="stages" checked>背景</label></fieldset>':'')+
+ '<p>配置包含已写入游戏的更改。</p><div class="pack-actions"><button data-action="export">'+(single===null?'导出所有更改':'另存单卡配置')+'</button>'+
+ (single===null?'<button data-action="import">导入配置文件</button><button data-action="restore">一键还原所有更改</button>':'')+'</div><progress hidden max="100"></progress><p role="status"></p>';
+ for(const button of section.querySelectorAll('[data-action]'))button.onclick=async()=>{
+  const action=button.dataset.action, groups=single===null?Array.from(section.querySelectorAll(':checked'),el=>el.value):['cards'];
+  const message=section.querySelector('[role=status]'),progress=section.querySelector('progress');
+  if(action!=='import'&&!groups.length){message.textContent='请选择卡牌或背景';return}
+  if(action==='restore'&&!await nativeConfirm('将所选范围（'+groups.map(x=>x==='cards'?'卡牌':'背景').join('、')+'）的已备份资源恢复到原始状态？'))return;
+  if(action==='import'&&!await nativeConfirm('将配置中的更改写入当前游戏？工坊会先备份本机原始资源。'))return;
+  const enabled=Array.from(modal.querySelectorAll('button:not(:disabled),input:not(:disabled)'));
+  enabled.forEach(el=>el.disabled=true);
+  const prevent=e=>e.preventDefault();modal.addEventListener('cancel',prevent);
+  progress.hidden=false;progress.value=0;message.textContent='正在准备…';
+  let active=true;
+  async function poll(){try{const state=await window.pywebview.api.transfer_progress();if(active){progress.value=state.percent;message.textContent=state.label}}finally{if(active)setTimeout(poll,250)}}
+  const timer=setTimeout(poll,350);
+  try{
+   const result=await window.pywebview.api.transfer(action,groups,single);
+   if(result.error)throw Error(result.error);
+   progress.value=result.cancelled?0:100;message.textContent=result.cancelled?'已取消':result.message;
+  }catch(error){message.textContent=error.message}
+  finally{active=false;clearTimeout(timer);enabled.forEach(el=>el.disabled=false);modal.removeEventListener('cancel',prevent)}
+ };
+ return section;
+}
+function exportCard(){
+ modal.innerHTML='<h2>导出单卡配置</h2>';
+ modal.append(transferPanel(cards[idx].id));
+ const close=document.createElement('button');close.textContent='关闭';close.onclick=()=>modal.close();modal.append(close);modal.showModal();
+}
+function nativeConfirm(message){return window.pywebview.api.message_box(String(message),true)}
+window.alert=message=>window.pywebview.api.message_box(String(message),false);
+async function preferences(){
+ const response=await fetch('settings'),config=await response.json();
+ modal.innerHTML='<h2>设置</h2><label>游戏路径<br><span class=directory-row><input id=gameFolder placeholder="选择游戏安装目录"><button type=button id=chooseGame>选择目录</button></span></label><p>填写游戏 EXE 所在文件夹或 Persistent 文件夹。留空时卡牌和背景列表为空。</p><label>备份路径<br><span class=directory-row><input id=folder><button type=button id=chooseBackup>选择目录</button></span></label><p>保存新的备份目录时，会自动迁移并校验已有备份。</p><p id=settingsStatus></p><button id=openGuide>使用指南</button> <button id=cancel>取消</button> <button id=save>保存并读取游戏</button>';
+ modal.querySelector('#openGuide').onclick=()=>showGuide(false);
+ const input=modal.querySelector('#folder'),game=modal.querySelector('#gameFolder');
+ modal.querySelector('#settingsStatus').before(transferPanel());
+ input.value=config.path;game.value=config.gamePath;
+ for(const [button,field] of [[modal.querySelector('#chooseGame'),game],[modal.querySelector('#chooseBackup'),input]]){
+  button.onclick=async()=>{
+   button.disabled=true;
+   try{
+    const selected=await window.pywebview.api.choose_directory(field.value);
+    if(selected)field.value=selected;
+   }catch(error){modal.querySelector('#settingsStatus').textContent='选择目录失败：'+error.message}
+   finally{button.disabled=false}
+  };
+ }
+ modal.querySelector('#cancel').onclick=()=>modal.close();
+ modal.querySelector('#save').onclick=async e=>{
+  const button=e.currentTarget;button.disabled=true;
+  modal.querySelector('#settingsStatus').textContent='正在校验游戏并迁移备份，请稍候…';
+  try{
+   const response=await fetch('settings',{method:'POST',body:JSON.stringify({path:input.value,gamePath:game.value})});
+   if(!response.ok)throw Error(await response.text());
+   cards=await(await fetch('cards')).json();groups[4]=[...new Set(cards.map(c=>c.pack))];page=0;
+   homeLeaderPlayer?.dispose?.();homeLeaderPlayer=null;homeLeaderHost=null;modal.close();home();
+  }catch(error){modal.querySelector('#settingsStatus').textContent=error.message}
+  finally{button.disabled=false}
+ };
+ modal.showModal();
+}
+let homeLeaderHost=null,homeLeaderPlayer=null;
+const leaderStorage=document.createElement('div');
+leaderStorage.style.cssText='position:fixed;left:-10000px;top:0;width:650px;height:440px;visibility:hidden;pointer-events:none';
+document.body.append(leaderStorage);
+function notifyFirstFrame(){
+ if(window.heroReady)return;
+ window.heroReady=true;
+ window.pywebview?.api.ready();
+}
+window.addEventListener('pywebviewready',()=>{if(window.heroReady)window.pywebview.api.ready()});
+function mountTitleParticles(title){
+ const canvas=document.createElement('canvas');
+ const ctx=canvas.getContext('2d');
+ if(!ctx)return;
+ const padding=64;
+ const reduced=matchMedia('(prefers-reduced-motion:reduce)');
+ const color='#08090b';
+ const strokes=[
+  'M7 4H58V37H7ZM16 12V17H49V12ZM16 24V29H49V24ZM27 36H37V44H62V52H3V44H27ZM9 57H57V77H37V90Q37 99 25 99H19L16 90H24Q27 90 27 86V77H9ZM18 64V70H48V64ZM12 79L20 83L7 96L1 91ZM44 79L54 85L49 93L38 85ZM89 1L98 9Q86 21 65 32L60 23ZM90 28L99 36Q84 51 66 62L60 54ZM92 55L101 64Q83 85 58 99L52 90Z',
+  'M47 2L57 0L66 16L56 20ZM8 19H95V31Q75 54 39 77Q47 88 99 86L96 98H54Q37 98 29 86L9 99L3 89L23 72Q52 55 74 32H8Z',
+  'M6 12H95V25H57V81H99V95H2V81H43V25H6Z',
+  'M13 7H25V31H36V43H25V71L37 67L38 79L3 92L0 80L13 76V43H2V31H13ZM58 3L71 0L77 15L65 19ZM40 18H99V30H67V39H94L91 78Q89 98 76 98H64L60 86H72Q79 86 79 77L82 51H65Q61 79 43 99L32 90Q54 68 54 30H40Z'
+ ].map(path=>new Path2D(path));
+ const mask=document.createElement('canvas'),ink=mask.getContext('2d',{willReadFrequently:true});
+ if(!ink)return;
+ canvas.setAttribute('aria-hidden','true');
+ title.classList.add('particles-ready');
+ title.append(canvas);
+ let points=[],pointer=null,frame=0,last=0,radius=54;
+ function sample(){
+  const w=title.clientWidth,h=title.clientHeight;
+  if(!w||!h)return;
+  const ratio=Math.min(devicePixelRatio||1,2);
+  canvas.width=Math.ceil((w+padding*2)*ratio);
+  canvas.height=Math.ceil((h+padding*2)*ratio);
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+  mask.width=w;mask.height=h;
+  ink.fillStyle=color;
+  ink.scale(w/208,h/206);
+  strokes.forEach((shape,i)=>{
+   ink.save();ink.translate((i%2)*107,Math.floor(i/2)*106);ink.fill(shape,'evenodd');ink.restore();
+  });
+  const pixels=ink.getImageData(0,0,w,h).data;
+  const step=w>=300?2:1.6;
+  radius=Math.min(62,w*.19);
+  points=[];
+  for(let y=0;y<h;y+=step)for(let x=0;x<w;x+=step){
+   if(pixels[(Math.floor(y)*w+Math.floor(x))*4+3]<110)continue;
+   const angle=Math.random()*Math.PI*2;
+   points.push({
+    x:x+padding,y:y+padding,
+    size:step*(.86+Math.random()*.33),noiseX:Math.cos(angle)*3.5,noiseY:Math.sin(angle)*3.5,
+    phase:Math.random()*Math.PI*2,dx:0,dy:0,z:0,blend:0
+   });
+  }
+  paint(0,1);
+ }
+ function paint(now,ease){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(mask,padding,padding);
+  let moving=false;
+  ctx.fillStyle=color;
+  const affected=[];
+  for(const p of points){
+   if(pointer&&Math.hypot(p.x-pointer.x,p.y-pointer.y)<radius||p.blend>.015)affected.push(p);
+  }
+  for(const p of affected){
+   let dx=0,dy=0,z=0,blend=0;
+   if(pointer){
+    const x=p.x-pointer.x,y=p.y-pointer.y,d=Math.hypot(x,y),u=d/radius;
+    if(u<1){
+     const depth=(1-u*u)**3;
+     const edge=u*(1-u)**2*44;
+     blend=Math.min(1,(1-u)*2.2);
+     dx=x/Math.max(d,1)*edge+p.noiseX*depth;
+     dy=y/Math.max(d,1)*edge+p.noiseY*depth+Math.sin(now*.005+p.phase)*depth*2;
+     z=depth*25;
+    }
+   }
+   p.dx+=(dx-p.dx)*ease;p.dy+=(dy-p.dy)*ease;p.z+=(z-p.z)*ease;
+   p.blend+=(blend-p.blend)*ease;
+   if(p.blend>.015)moving=true;
+   ctx.globalCompositeOperation='destination-out';
+   ctx.globalAlpha=p.blend;
+   const cell=mask.width>=300?2:1.6;
+   ctx.fillRect(p.x-cell/2,p.y-cell/2,cell+.5,cell+.5);
+  }
+  ctx.globalCompositeOperation='source-over';
+  for(const p of affected){
+   const perspective=200/(200+p.z);
+   const size=p.size*perspective;
+   ctx.globalAlpha=p.blend*(1-p.z/115);
+   ctx.fillRect(p.x+p.dx-size/2,p.y+p.dy+p.z*.25-size/2,size,size);
+  }
+  ctx.globalAlpha=1;
+  return moving;
+ }
+ function draw(now){
+  frame=0;
+  if(!title.isConnected)return;
+  const dt=Math.min(now-(last||now-16),40);last=now;
+  const moving=paint(now,1-Math.exp(-dt/86));
+  if(pointer||moving)frame=requestAnimationFrame(draw);
+  else {for(const p of points)p.blend=p.dx=p.dy=p.z=0;paint(now,1)}
+ }
+ const resize=new ResizeObserver(sample);resize.observe(title);sample();
+ const removal=new MutationObserver(()=>{
+  if(title.isConnected)return;
+  resize.disconnect();removal.disconnect();cancelAnimationFrame(frame);
+ });
+ removal.observe(main,{childList:true});
+ title.addEventListener('pointermove',event=>{
+  if(event.pointerType!=='mouse'||reduced.matches)return;
+  const box=title.getBoundingClientRect();
+  pointer={x:event.clientX-box.left+padding,y:event.clientY-box.top+padding};
+  if(!frame){last=0;frame=requestAnimationFrame(draw)}
+ });
+ title.addEventListener('pointerleave',()=>{pointer=null});
+ title.addEventListener('pointercancel',()=>{pointer=null});
+}
+function home(){
+ view='home';
+ main.innerHTML='<section class="orbital"><div class="word-depth" aria-hidden="true"><div class="word-track"><span>SHADOWVERSE ATELIER</span><span>SHADOWVERSE ATELIER</span></div></div><div class="hero-copy"><small>SHADOWVERSE ATELIER</small><h1 class="particle-title">影之工坊</h1><nav><button onclick="preferences()">设置</button></nav></div><div id="leaderHero" aria-label="拉拉安瑟姆待机动画"></div></section><div class="home atlas">'+cats.map((c,j)=>'<button class="tile"'+(j===0?'':" style=\"background-image:linear-gradient(0deg,#10141dee,transparent 80%),url(tile1.webp)\"")+' onclick="category('+j+')">'+c+' ↗</button>').join('')+'</div>';
+ mountTitleParticles(main.querySelector('.particle-title'));
+ const hero=main.querySelector('.orbital'), depth=hero.querySelector('.word-depth');
+ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  hero.onpointermove=e=>{
+   const rect=hero.getBoundingClientRect();
+   depth.style.transform='translate('+((e.clientX-rect.left)/rect.width-.5)*32+'px,'+((e.clientY-rect.top)/rect.height-.5)*18+'px)';
+  };
+  hero.onpointerleave=()=>depth.style.transform='';
+ }
+ const host=document.getElementById('leaderHero');
+ if(!cards.length){notifyFirstFrame();return}
+ if(homeLeaderHost){
+  host.replaceWith(homeLeaderHost);
+  homeLeaderPlayer.startRendering();
+  return;
+ }
+ homeLeaderHost=host;
+ const player=new spine.SpinePlayer('leaderHero',{skelUrl:'class_1223.skel',atlasUrl:'hero.atlas',animation:'00_idle',skin:'JP',draw:notifyFirstFrame,success:player=>setTimeout(()=>player.drawFrame(false),0),error:()=>window.pywebview?.api.ready(),alpha:true,backgroundColor:'#00000000',showControls:false,premultipliedAlpha:true,viewport:{x:-305,y:-42,width:620,height:415,padLeft:0,padRight:0,padTop:0,padBottom:0}});
+ homeLeaderPlayer=player;
+ const monitor=new MutationObserver(()=>{
+  if(!main.contains(host)&&!leaderStorage.contains(host)){
+   player.stopRendering();
+   leaderStorage.append(host);
+  }
+ });
+ monitor.observe(main,{childList:true});
+}
+async function category(j){
+ if(document.querySelector('.entry-loading'))return;
+ const popup=document.createElement('dialog');
+ popup.className='entry-loading';
+ popup.setAttribute('aria-label',j===0?'正在加载卡牌':'正在加载背景');
+ popup.innerHTML='<span aria-hidden="true"></span><strong role="status">'+popup.getAttribute('aria-label')+'…</strong>';
+ popup.oncancel=e=>e.preventDefault();document.body.append(popup);popup.showModal();
+ try{
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  await Promise.all([j===0?library():stageList(),new Promise(resolve=>setTimeout(resolve,240))]);
+ }catch(e){alert(e.message)}finally{popup.close();popup.remove()}
+}
+async function back(){if(view==='stage'){if(stageDirty&&!await nativeConfirm('放弃本次背景更改？'))return;return stageList()}if(view==='edit'){if((Object.keys(changes).length||fieldEdit||Object.keys(variantFieldEdits).length||Object.keys(foilEdits).length)&&!await nativeConfirm('放弃本次待写入的更改？'))return;library()}else home()}
+let modifiedCards=new Set(),onlyVariants=false;
+async function refreshModified(){const r=await fetch('modified-cards');if(!r.ok)throw Error('修改状态读取失败');modifiedCards=new Set(await r.json())}
+async function library(){
+ try{await refreshModified()}catch(e){alert(e.message);return}
+ view='library';
+ main.innerHTML='<section class="library-page"><h1>卡牌藏馆</h1><div class="library-layout"><aside class="filter-sidebar"><div class="filter-heading"><h2>筛选</h2><button id=resetFilters>重置</button></div><label class="variant-filter"><input type="checkbox" id="onlyVariants" '+(onlyVariants?'checked':'')+'>仅显示拥有异画的卡牌</label>'+groups.map((g,j)=>'<fieldset><legend>'+['费用','分类','职业','稀有度','卡包','修改状态'][j]+'</legend>'+g.map((x,k)=>'<label><input type=checkbox data-j="'+j+'" value="'+k+'" '+(filters[j].includes(k)?'checked':'')+'>'+esc(x)+'</label>').join('')+'</fieldset>').join('')+'</aside><div class="library-results"><div class=bar><input id=q placeholder="搜索卡牌名或编号"><small id=count></small></div><div class=grid></div><div class=bar><button id=prev>上一页</button><button id=next>下一页</button></div></div></div></section>';
+ const query=main.querySelector('#q');query.value=search;
+ query.oninput=()=>{search=query.value;page=0;grid()};
+ main.querySelector('.filter-sidebar').onchange=()=>{
+  onlyVariants=main.querySelector('#onlyVariants').checked;
+  filters=groups.map((_,j)=>[...main.querySelectorAll('.filter-sidebar input:checked')].filter(x=>Number(x.dataset.j)===j).map(x=>Number(x.value)));
+  page=0;grid();
+ };
+ main.querySelector('#resetFilters').onclick=()=>{
+  onlyVariants=false;filters=groups.map(()=>[]);main.querySelectorAll('.filter-sidebar input').forEach(x=>x.checked=false);page=0;grid();
+ };
+ grid();
+}
+const cardTypeFilterIndex={1:0,4:1,2:2,3:2};
+function grid(){let list=cards.map((c,i)=>[c,i]).filter(([c])=>(c.name+String(c.id)).includes(search)&&(!onlyVariants||c.hasVariants)&&[Math.min(8,c.cost),cardTypeFilterIndex[c.typ],c.job,c.rar-1,groups[4].indexOf(c.pack),modifiedCards.has(String(c.id))?0:1].every((v,j)=>!filters[j].length||filters[j].includes(v)));let pages=Math.max(1,Math.ceil(list.length/36));page=Math.min(page,pages-1);count.textContent=list.length+' 张 · '+(page+1)+' / '+pages;main.querySelector('.grid').innerHTML=list.length===0?(cards.length?'<p>没有符合筛选条件的卡牌。</p>':'<p>暂无卡牌，请在设置中填写游戏路径。</p>'):list.slice(page*36,page*36+36).map(([c,i])=>'<button class=card onclick="edit('+i+')"><img loading=lazy src="art?i='+i+'"><b>'+esc(c.name)+'</b></button>').join('');prev.disabled=page===0;next.disabled=page+1>=pages;prev.onclick=()=>{page--;grid()};next.onclick=()=>{page++;grid();scrollTo(0,0)}}
+let placements={};
+async function edit(i){
+ const previous=idx;
+ try{
+  const response=await fetch('slots?i='+i);
+  const result=await response.json();
+  if(!response.ok)throw Error(result.error||'卡牌资源读取失败');
+  clearVoices();idx=i;fieldEdit=null;variantFieldEdits={};foilEdits={};changes={};urls={};placements={};slots=result;view='edit';detail();
+ }catch(error){idx=previous;alert('无法打开卡牌编辑：'+error.message)}
+}
+function ratio(s){return s.kind==='header'||s.label.includes('横幅')?5:isFace(s)?848/1024:s.size[0]/s.size[1]}
+function voices(tile){
+ const names=['出牌时','攻击时','被破坏时','进化时','超进化时'];
+ const columns=[...names.map(()=>[]),[]];
+ slots.forEach((s,j)=>{
+  if(!s.audio)return;
+  const action=s.label.split(' · ')[0];
+  const group=action.endsWith('攻击时')?1:action.endsWith('被破坏时')?2:names.indexOf(action);
+  columns[group<0?5:group].push('<div>'+tile(s,j)+'<audio controls preload="none" src="'+(urls[j]||('listen?i='+idx+'&s='+j+'&v='+Date.now()))+'"></audio>'+voiceTools(j)+'</div>');
+ });
+ function column(name,items){return '<section><h3>'+name+'</h3>'+items.join('')+'</section>'}
+ return '<div class="voice-scroll"><div class="voice-columns">'+names.map((name,i)=>column(name,columns[i])).join('')+'</div></div>'+(columns[5].length?column('其他语音',columns[5]):'');
+}
+function variantStates(){return slots.some(s=>s.variant===0&&s.state===1&&s.kind==="header")?[0,1]:[0]}
+function variantOptions(){
+ const groups=[...new Set(slots.filter(slot=>slot.kind==='face'&&slot.variant>0).map(slot=>slot.variant))];
+ return groups.filter(group=>variantStates().every(state=>['face','header'].every(kind=>slots.some(slot=>slot.variant===group&&slot.state===state&&slot.kind===kind))));
+}
+function variantPlan(group){
+ const plan=[];
+ for(const state of variantStates()){
+  for(const kind of ['face','header']){
+   const source=slots.findIndex(slot=>slot.variant===group&&slot.state===state&&slot.kind===kind);
+   const target=slots.findIndex(slot=>slot.variant===0&&slot.state===state&&slot.kind===kind);
+   if(source<0||target<0)throw Error('这组异画缺少对应卡图或横幅');
+   plan.push({source,target});
+  }
+ }
+ const before=slots.find(slot=>slot.variant===group&&slot.state===0&&slot.kind==='face');
+ const source=slots.findIndex(slot=>slot.variant===group&&slot.kind==='crest'&&slot.art===before.art);
+ const target=slots.findIndex(slot=>slot.variant===0&&slot.kind==='crest'&&slot.art===cards[idx].art);
+ if(source>=0&&target>=0)plan.push({source,target});
+ return plan;
+}
+async function syncVariantVoice(group,cardIndex){
+ const plan=await fetch('variant-voice?i='+cardIndex+'&group='+group);
+ const data=await plan.json();
+ if(!plan.ok)throw Error(data.error||'异画语音读取失败');
+ let count=0;
+ for(const row of data.slots){
+  const response=await fetch('variant-audio?i='+cardIndex+'&group='+group+'&slot='+row.slot);
+  if(!response.ok)throw Error('异画语音读取失败');
+  const bytes=new Uint8Array(await response.arrayBuffer());let binary='';
+  for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
+  const wem=btoa(binary);
+  changes[row.slot]=wem;delete voiceStates[row.slot];
+  try{await stagePreview(row.slot,wem)}catch(error){}
+  count++;
+ }
+ return count;
+}
+async function useVariant(group,button,syncVoice){
+ if(button)button.disabled=true;
+ const cardIndex=idx;
+ try{
+  const plan=variantPlan(group);
+  let framing=null;
+  if(cards[cardIndex].typ===1){
+   const response=await fetch('variant-field?i='+cardIndex+'&variant='+group);
+   const result=await response.json();
+   if(!response.ok)throw Error(result.error||'异画取景读取失败');
+   framing={before:fieldEdit?.before||result.before,after:(variantFieldEdits[group]?.after||result.after).slice(),states:[0,1,2]};
+  }
+  const prepared=await Promise.all(plan.map(async({source,target})=>{
+   const image=await loadPicture(urls[source]||nocache('current?i='+cardIndex+'&s='+source));
+   const canvas=document.createElement('canvas');
+   [canvas.width,canvas.height]=slots[target].size;
+   const context=canvas.getContext('2d');context.imageSmoothingQuality='high';
+   context.drawImage(image,0,0,canvas.width,canvas.height);
+   return {target,url:canvas.toDataURL('image/png')};
+  }));
+  if(idx!==cardIndex||view!=='edit')return;
+  for(const {target,url} of prepared){
+   urls[target]=url;changes[target]=url.split(',')[1];delete placements[target];
+  }
+  for(const {source,target} of plan){
+   if(slots[target].foil)foilEdits[slots[target].art]=slots[source].foil?(foilEdits[slots[source].art]?.startsWith('common')?foilEdits[slots[source].art]:slots[source].art):'common';
+  }
+  if(framing)fieldEdit=framing;
+  let voices=0;
+  if(syncVoice){
+   try{voices=await syncVariantVoice(group,cardIndex)}
+   catch(error){alert(error.message+'（已跳过异画语音，只替换卡图与横幅）')}
+  }
+  if(modal.open)modal.close();
+  detail();
+  const status=document.createElement('p');status.className='field-status';
+  status.textContent='异画 '+group+(voices?' 与 '+voices+' 条异画语音':'')+'已加入待替换内容，点击“备份并替换”写入游戏。';
+  main.querySelector('.card-title').after(status);
+ }catch(error){alert(error.message)}
+ finally{if(button?.isConnected)button.disabled=false}
+}
+function askVoice(group){
+ modal.innerHTML='<h2>是否同步替换异画音频？</h2><p>卡图与横幅将换成异画 '+group+'。是否把这个异画自己的出牌、攻击、被破坏等语音一起替换过来？</p><p><button type="button" onclick="modal.close();useVariant('+group+',null,true)">是</button> <button type="button" onclick="modal.close();useVariant('+group+',null,false)">否</button> <button type="button" onclick="modal.close()">取消</button></p>';
+ modal.showModal();
+}
+function chooseVariant(){
+ const options=variantOptions();
+ if(options.length===1){askVoice(options[0]);return}
+ if(!options.length)return;
+ modal.innerHTML='<h2>选择要替换的异画</h2><div class="variant-choices">'+options.map(group=>{
+  const source=slots.findIndex(slot=>slot.variant===group&&slot.state===0&&slot.kind==='face');
+  return '<button type="button" onclick="askVoice('+group+')"><img src="'+(urls[source]||nocache('current?i='+idx+'&s='+source))+'">异画 '+group+'</button>';
+ }).join('')+'</div><p><button type="button" onclick="modal.close()">取消</button></p>';
+ modal.showModal();
+}
+async function restoreCard(){
+ const card=cards[idx];
+ if(!await nativeConfirm('确认一键还原「'+card.name+'」？将恢复已备份的卡面、异画、横幅、纹章、信仰及其取景、战场取景坐标、卡名、语音和闪卡特效，并清除本卡待写入的调整。'))return;
+ main.inert=true;
+ try{
+  const result=await window.pywebview.api.transfer('restore',['cards'],card.id);
+  if(result.error)throw Error(result.error);
+  cards=await(await fetch('cards')).json();await edit(idx);alert(result.message);
+ }catch(error){alert(error.message)}finally{main.inert=false}
+}
+function renameCard(){
+ const cardIndex=idx;
+ modal.innerHTML='<h2>自定义卡名</h2><form><label>卡牌名称 <input maxlength="60" required autofocus></label><p role="status">保存后写入本地游戏资源，重启游戏后查看。</p><button type="button">取消</button> <button type="submit">备份并写入</button> <button type="submit" data-default formnovalidate>恢复默认卡名</button></form>';
+ const form=modal.querySelector('form'),input=form.querySelector('input'),save=form.querySelector('[type=submit]:not([data-default])');
+ if(Number(cards[cardIndex].id)===10734120)
+  form.querySelector('[role=status]').textContent='新名称会同步写入主卡、超进化召唤物和相关说明。重启游戏后查看。';
+ input.value=cards[cardIndex].name;
+ form.querySelector('[type=button]').onclick=()=>modal.close();
+ form.onsubmit=async event=>{
+  event.preventDefault();if(save.disabled)return;save.disabled=true;
+  try{
+   const response=await fetch('card-rename',{method:'POST',body:JSON.stringify({i:cardIndex,name:input.value,restore:event.submitter?.hasAttribute('data-default')===true})});
+   if(!response.ok)throw Error(await response.text());
+   await response.json();
+   const list=await fetch('cards');
+   if(list.ok)cards=await list.json();
+   modal.close();detail();
+  }catch(error){form.querySelector('[role=status]').textContent=error.message}
+  finally{save.disabled=false}
+ };
+ modal.showModal();input.select();
+}
+function detail(){function tile(s,j){return '<button class=slot '+('onclick="choose('+j+')"')+'>'+(s.audio?'':'<img style="width:100%;height:auto;aspect-ratio:'+ratio(s)+';object-fit:fill" src="'+(urls[j]||nocache('current?i='+idx+'&s='+j))+'">')+'<b>'+esc(s.label)+(placements[j]?' · 已调整位置':isAuto(s)?' · 自动':'')+(changes[j]?' · 待写入':'')+'</b></button>'}main.innerHTML='<section><small>卡牌 / '+cards[idx].id+'</small><div class=card-title><h1>'+esc(cards[idx].name)+'</h1><div class=card-actions><button type=button onclick="renameCard()">自定义卡名</button>'+(variantOptions().length?'<button type=button onclick="chooseVariant()">一键替换异画</button>':'')+'<button type=button onclick="restoreCard()">一键还原配置</button><button type=button onclick="exportCard()">导出单卡配置</button>'+(slots.some(s=>s.foil)?'<button onclick="openFoil()">闪卡动态预览</button>':'')+'</div></div><div class=slots>'+slots.map((s,j)=>s.audio?'':tile(s,j)).join('')+'</div><h2>动作语音</h2>'+voices(tile)+'<button class=apply '+((Object.keys(changes).length||fieldEdit||Object.keys(variantFieldEdits).length||Object.keys(foilEdits).length)?'':'disabled')+' onclick="apply(this)">备份并替换</button></section>';initVoices()}
+function isFace(s){return s.kind==='face'||['进化前','进化后'].includes(s.label)}
+function isAuto(s){return s.label.includes('横幅')&&slots.some(face=>isFace(face)&&s.label.startsWith(face.label+' ·'))}
+function compare(j){
+ modal.innerHTML='<h2>'+slots[j].label+'</h2><div class="compare triple"><figure><figcaption>原卡图</figcaption><div class=pane><img src="'+nocache('image?i='+idx+'&s='+j)+'"></div></figure><figure><figcaption>当前卡图</figcaption><div class=pane><img src="'+(urls[j]||nocache('current?i='+idx+'&s='+j))+'"></div><button type="button" class="restore-face" onclick="restoreFace('+j+',this)">恢复原卡图</button></figure><figure><figcaption>新卡图</figcaption><div class=pane id=newPane><button class=addart aria-label="添加新卡图">＋</button></div></figure></div><div id=cropTools><p><button onclick="modal.close()">取消</button></p></div>';
+ if(cards[idx].typ===1){const panel=document.createElement('aside');panel.className='fieldPanel';const group=modal.querySelector('.triple');group.classList.add('withField');group.appendChild(panel);fieldPanel(j,panel).catch(e=>panel.textContent=e.message)}
+ modal.querySelector('.addart').onclick=()=>pick(j);modal.showModal()
+}
+async function restoreFace(j,button){
+ const follower=cards[idx].typ===1;
+ if(!await nativeConfirm(follower?'恢复原卡图需要重置战场取景。确认恢复？':'确认恢复原卡图？'))return;
+ button.disabled=true;
+ try{
+  const related=slots.findIndex(s=>s.label===slots[j].label+' · 预览横幅 / 记牌器小图');
+  const indices=related<0?[j]:[j,related];
+  const restored=await Promise.all(indices.map(async index=>{
+   const response=await fetch(nocache('image?i='+idx+'&s='+index));
+   if(!response.ok){const error=await response.json();throw Error(error.error||'原卡图读取失败')}
+   const blob=await response.blob();
+   const url=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob)});
+   return [index,url];
+  }));
+  if(follower){
+   const group=slots[j].variant||0, query='?i='+idx+'&variant='+group;
+   const read=async op=>{const r=await fetch(op+query);if(!r.ok)throw Error('读取取景失败');return r.json()};
+   const [current,defaults]=await Promise.all([read('field'),read('field-default')]);
+   const pending=group?variantFieldEdits[group]:fieldEdit;
+   const after=(pending?.after||current).slice(),states=slots[j].state===1?[1,2]:[0];
+   for(const state of states)after.splice(4*state,4,...defaults.slice(4*state,4*state+4));
+   const reset={before:pending?.before||current,after,states:[...new Set([...(pending?.states||[]),...states])]};
+   if(group)variantFieldEdits[group]=reset;else fieldEdit=reset;
+  }
+  for(const [index,url] of restored){urls[index]=url;changes[index]=url.split(',')[1];delete placements[index]}
+  modal.close();detail();compare(j);
+ }catch(error){alert(error.message);button.disabled=false}
+}
+function choose(j){if(slots[j].kind==='crest'||/横幅|^纹章|^信仰/.test(slots[j].label)){positionEditor(j).catch(e=>alert(e.message));return}if(isFace(slots[j]))compare(j);else pick(j)}
+async function stagePreview(j,wem){
+ const response=await fetch('audio-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audio:wem})});
+ if(!response.ok)throw Error('试听生成失败：'+await response.text());
+ const url=URL.createObjectURL(await response.blob());
+ if(urls[j]?.startsWith('blob:'))URL.revokeObjectURL(urls[j]);
+ urls[j]=url;
+}
+async function stageVoice(j,wem){
+ await stagePreview(j,wem);
+ changes[j]=wem;
+ delete voiceStates[j];
+}
+async function encodeVoice(j,file){
+ const context=new AudioContext();
+ try{
+  const decoded=await context.decodeAudioData(await file.arrayBuffer());
+  if(decoded.duration>120)throw Error('语音最长支持 120 秒');
+  const channels=Math.min(decoded.numberOfChannels,2), frames=decoded.length;
+  const wav=new ArrayBuffer(44+frames*channels*2), view=new DataView(wav);
+  const text=(offset,value)=>{for(let k=0;k<value.length;k++)view.setUint8(offset+k,value.charCodeAt(k))};
+  text(0,'RIFF');view.setUint32(4,wav.byteLength-8,true);text(8,'WAVE');text(12,'fmt ');
+  view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,channels,true);
+  view.setUint32(24,decoded.sampleRate,true);view.setUint32(28,decoded.sampleRate*channels*2,true);
+  view.setUint16(32,channels*2,true);view.setUint16(34,16,true);text(36,'data');view.setUint32(40,wav.byteLength-44,true);
+  const samples=Array.from({length:channels},(_,c)=>decoded.getChannelData(c));
+  for(let f=0;f<frames;f++)for(let c=0;c<channels;c++){const v=Math.max(-1,Math.min(1,samples[c][f]));view.setInt16(44+(f*channels+c)*2,Math.round(v*(v<0?32768:32767)),true)}
+  const audio=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result.split(',')[1]);r.onerror=reject;r.readAsDataURL(new Blob([wav]))});
+  const response=await fetch('audio-convert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({i:idx,slot:j,audio})});
+  if(!response.ok)throw Error(await response.text());
+  const wem=(await response.json()).wem;
+  await stageVoice(j,wem);
+ }finally{await context.close()}
+}
+function voiceHint(j){
+ const row=[...document.querySelectorAll('[data-voice]')].find(element=>Number(element.dataset.voice)===Number(j));
+ if(row){
+  row.scrollIntoView({block:'center'});
+  const player=row.previousElementSibling;
+  if(player&&player.play)player.play().catch(()=>{});
+ }
+ const status=document.createElement('p');status.className='field-status';status.textContent='新音频已就绪，点击这一行的播放器即可试听，满意后再点“备份并替换”写入游戏。';
+ main.querySelector('.card-title').after(status);
+ setTimeout(()=>status.remove(),9000);
+}
+function pick(j){
+ const file=document.createElement('input');file.type='file';file.accept=slots[j].audio?'.wem,.mp3,.wav':'image/*';
+ file.onchange=async()=>{
+  const selected=file.files[0];if(!selected)return;
+  if(slots[j].audio&&!/\.wem$/i.test(selected.name)){
+   modal.innerHTML='<h2>正在转换语音…</h2><p>正在生成并验证 WEM，请稍候。</p>';modal.showModal();
+   try{await encodeVoice(j,selected);detail();voiceHint(j)}catch(e){alert('语音转换失败：'+e.message)}finally{modal.close()}
+   return;
+  }
+  const r=new FileReader();r.onload=async()=>{if(slots[j].audio){try{await stageVoice(j,r.result.split(',')[1]);detail();voiceHint(j)}catch(e){alert(e.message)}}else{const im=new Image();im.onload=()=>crop(j,im);im.src=r.result}};r.readAsDataURL(selected);
+ };file.click();
+}
+function loadPicture(src){
+ return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('图片读取失败'));im.src=src})
+}
+async function positionEditor(j){
+ const item=slots[j], cardIndex=idx, original=nocache('image?i='+idx+'&s='+j);
+ const header=item.label.includes('横幅'), faceIndex=header?slots.findIndex(s=>isFace(s)&&s.art===item.art&&(s.state||0)===(item.state||0)&&(s.variant||0)===(item.variant||0)):slots.findIndex(s=>isFace(s)&&(s.variant||0)===(item.variant||0)&&(s.state||0)===0);
+ const [tw,th]=item.size,W=header?th*5:tw,H=th;
+ const current=urls[j]||(nocache('current?i='+idx+'&s='+j));
+ const mask=await loadPicture(header?current:original);
+ let state=placements[j]?{...placements[j]}:{src:urls[j]||(nocache('current?i='+idx+'&s='+j)),dx:0,dy:0,z:1,mode:'original'};
+ let source=await loadPicture(state.src);
+ if(cardIndex!==idx||view!=='edit')return;
+ modal.innerHTML='<h2>'+esc(item.label)+'</h2><p>拖动图像调整位置，蒙版保持固定。</p><canvas class="positionPreview"></canvas><p><label>缩放 <input type=range min=".25" max="5" step=".01"></label></p><div class=bar><button id=upload>选择图片</button>'+(faceIndex>=0?'<button id=fromCard>使用卡面</button>':'')+'<button id=reset>重置位置</button><button id=cancel>取消</button><button id=confirm>确定</button></div>';
+ const el=id=>modal.querySelector('#'+id),cv=modal.querySelector('canvas'),slider=modal.querySelector('input');
+ cv.width=tw;cv.height=th;cv.style.cssText='width:min(70vw,'+(header?'740':'360')+'px);height:auto;aspect-ratio:'+W+'/'+H+';background:#0b1722';
+ const ctx=cv.getContext('2d',{willReadFrequently:true});
+ ctx.drawImage(mask,0,0,tw,th);const alpha=ctx.getImageData(0,0,tw,th).data;
+ let minX=tw,maxX=0,minY=th,maxY=0;
+ for(let y=0;y<th;y++)for(let x=0;x<tw;x++)if(alpha[4*(y*tw+x)+3]>16){minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y)}
+ const cx=(minX+maxX+1)*W/(2*tw),cy=(minY+maxY+1)/2;
+ function render(){
+  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,tw,th);ctx.save();ctx.scale(tw/W,1);
+  ctx.translate(cx+state.dx,cy+state.dy);ctx.scale(state.z,state.z);ctx.translate(-cx,-cy);
+  if(state.mode==='aligned'){
+   const [a,b]=state.matrix;ctx.transform(a[0],b[0],a[1],b[1],a[2],b[2]);ctx.drawImage(source,0,0,848,1024)
+  }else if(state.mode==='original')ctx.drawImage(source,0,0,W,H);
+  else{const sw=state.mode==='card'?848:source.width,sh=state.mode==='card'?1024:source.height;
+   const scale=Math.max((maxX-minX+1)*W/tw/sw,(maxY-minY+1)/sh);
+   ctx.drawImage(source,cx-sw*scale/2,cy-sh*scale/2,sw*scale,sh*scale)}
+  ctx.restore();const pixels=ctx.getImageData(0,0,tw,th);
+  for(let k=3;k<alpha.length;k+=4)pixels.data[k]=Math.min(alpha[k],pixels.data[k]);
+  ctx.putImageData(pixels,0,0);slider.value=state.z
+ }
+ function reset(){state.dx=0;state.dy=0;state.z=1;render()}
+ async function select(src,mode){const next=await loadPicture(src);state.src=src;source=next;state.mode=mode;reset()}
+ el('upload').onclick=()=>{const f=document.createElement('input');f.type='file';f.accept='image/*';f.onchange=()=>{if(!f.files[0])return;const r=new FileReader();r.onload=()=>select(r.result,'uploaded').catch(e=>alert(e.message));r.readAsDataURL(f.files[0])};f.click()};
+ if(faceIndex>=0)el('fromCard').onclick=async()=>{
+  try{
+   const hint=modal.querySelector('h2 + p');
+   let chosen=faceIndex;
+   if(!header&&cards[idx].typ===1){
+    const evolved=slots.findIndex(s=>isFace(s)&&s.variant===item.variant&&s.state===1);
+    if(evolved>=0){
+     const picker=document.createElement('dialog');
+     picker.innerHTML='<h2>选择卡面</h2><form method="dialog"><button value="before">进化前</button> <button value="after">进化后</button> <button value="">取消</button></form>';
+     document.body.append(picker);
+     const choice=await new Promise(resolve=>{picker.onclose=()=>resolve(picker.returnValue);picker.showModal()});
+     picker.remove();if(!choice)return;if(choice==='after')chosen=evolved;
+    }
+   }
+   const button=el('fromCard'),confirm=el('confirm');
+   button.disabled=confirm.disabled=true;
+   hint.textContent='正在读取'+slots[chosen].label+'完整卡面…';
+   try{
+    await select(urls[chosen]||nocache('current?i='+cardIndex+'&s='+chosen),'card');
+    delete state.matrix;
+    hint.textContent='已使用'+slots[chosen].label+'完整卡面。拖动或缩放调整取景，点击确定暂存。';
+   }catch(error){hint.textContent='卡面读取失败，请重试。';throw error}
+   finally{button.disabled=confirm.disabled=false}
+  }catch(e){alert(e.message)}
+ };
+ el('reset').onclick=reset;el('cancel').onclick=()=>modal.close();slider.oninput=()=>{state.z=+slider.value;render()};
+ cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);let lastX=e.clientX,lastY=e.clientY;
+  cv.onpointermove=m=>{state.dx+=(m.clientX-lastX)*W/cv.clientWidth;state.dy+=(m.clientY-lastY)*H/cv.clientHeight;lastX=m.clientX;lastY=m.clientY;render()};
+  cv.onlostpointercapture=()=>cv.onpointermove=null};
+ el('confirm').onclick=()=>{const url=cv.toDataURL();placements[j]={...state};urls[j]=url;changes[j]=url.split(',')[1];modal.close();detail()};
+ modal.showModal();render()
+}
+function crop(j,im){let [tw,th]=slots[j].size,h=th,w=h*ratio(slots[j]);const paired=isFace(slots[j]);if(paired)modal.querySelector('#newPane').innerHTML='<canvas></canvas>';let controls=paired?modal.querySelector('#cropTools'):modal;controls.innerHTML='<h2>裁切 · '+tw+' × '+th+'</h2>'+(paired?'':'<canvas></canvas>')+'<p>拖动定位　<input type=range min=1 max=5 step=.01 value=1></p><button id=cancel>取消</button> <button id=ok>确定裁切</button>';let cv=paired?modal.querySelector('#newPane canvas'):controls.querySelector('canvas'),scale=Math.min(540/w,360/h);cv.width=Math.round(w*scale);cv.height=Math.round(h*scale);let z=1,x=.5,y=.5,r,sw,sh,sx,sy;function render(){r=Math.max(w/im.width,h/im.height)*z;sw=w/r;sh=h/r;sx=x*(im.width-sw);sy=y*(im.height-sh);cv.getContext('2d').drawImage(im,sx,sy,sw,sh,0,0,cv.width,cv.height);modal.querySelector('.fieldPanel')?.redraw?.()}render();controls.querySelector('input').oninput=e=>{z=+e.target.value;render()};cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);let a=e.clientX,b=e.clientY;cv.onpointermove=e=>{x=Math.min(1,Math.max(0,x-(e.clientX-a)*sw/cv.clientWidth/Math.max(1,im.width-sw)));y=Math.min(1,Math.max(0,y-(e.clientY-b)*sh/cv.clientHeight/Math.max(1,im.height-sh)));a=e.clientX;b=e.clientY;render()};cv.onpointerup=()=>cv.onpointermove=null};modal.querySelector('#cancel').onclick=()=>modal.close();modal.querySelector('#ok').onclick=async e=>{let ok=e.currentTarget;ok.disabled=true;let o=document.createElement('canvas');o.width=tw;o.height=th;let ctx=o.getContext('2d');ctx.imageSmoothingQuality='high';ctx.drawImage(im,sx,sy,sw,sh,0,0,tw,th);const url=o.toDataURL(),image=url.split(',')[1],k=slots.findIndex(s=>s.label===slots[j].label+' · 预览横幅 / 记牌器小图');try{if(paired&&k>=0){ok.textContent='正在生成横幅…';const res=await fetch('header',{method:'POST',body:JSON.stringify({i:idx,slot:j,image})});if(!res.ok)throw Error(await res.text());const blob=await res.blob();const banner=await new Promise((resolve,reject)=>{let reader=new FileReader;reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob)});delete placements[k];urls[k]=banner;changes[k]=banner.split(',')[1]}urls[j]=url;changes[j]=image;modal.close();detail()}catch(err){alert(err.message);ok.disabled=false;ok.textContent='确定裁切'}};if(!paired)modal.showModal()}
+async function apply(btn){btn.disabled=true;try{await prepareVoiceChanges();let r=await fetch('apply',{method:'POST',body:JSON.stringify({i:idx,changes,field:fieldEdit,variantFields:variantFieldEdits,foils:foilEdits})});let msg=await r.text();if(!r.ok)throw Error(msg);fieldEdit=null;variantFieldEdits={};foilEdits={};changes={};placements={};urls={};clearVoices();for(const [j,s] of slots.entries())if(s.audio){if(urls[j]?.startsWith('blob:'))URL.revokeObjectURL(urls[j]);delete urls[j]}detail();alert('已写入，备份位于 '+msg)}catch(e){btn.disabled=false;alert(e.message)}}const cardsReady=fetch('cards').then(r=>{if(!r.ok)throw Error('卡牌数据加载失败');return r.json()}).then(d=>{cards=d;groups[5]=['已修改的卡牌','未修改的卡牌'];groups[4]=[...new Set([...cards].sort((a,b)=>a.packId-b.packId).map(c=>c.pack))];});cardsReady.then(home,home);
+async function showGuide(startup){
+ const data=await window.pywebview.api.guide();
+ if((startup&&data.hidden)||document.querySelector('#usageGuide'))return;
+ const dialog=document.createElement('dialog');dialog.id='usageGuide';dialog.setAttribute('aria-label','使用指南');
+ dialog.innerHTML='<article tabindex="0"></article><footer><label><input type="checkbox"> 不再显示</label><button>确认</button></footer>';
+ const article=dialog.querySelector('article');let list=null;
+ for(const line of data.text.split(/\r?\n/)){
+  if(!line.trim()){list=null;continue}
+  const item=line.match(/^(\d+\. |- )(.*)$/);
+  let node,content;
+  if(item){
+   const tag=item[1]==='- '?'ul':'ol';
+   if(list?.localName!==tag){list=document.createElement(tag);article.append(list)}
+   node=document.createElement('li');list.append(node);content=item[2];
+  }else{
+   list=null;node=document.createElement(line.startsWith('## ')?'h3':line.startsWith('# ')?'h2':'p');
+   content=line.replace(/^#{1,2} /,'');article.append(node);
+  }
+  for(const part of content.split(/(\*\*[^*]+\*\*|`[^`]+`)/g)){
+   if(part.startsWith('**')||part.startsWith('`')){
+    const bold=part.startsWith('**'),el=document.createElement(bold?'strong':'code');
+    el.textContent=part.slice(bold?2:1,bold?-2:-1);node.append(el);
+   }else node.append(part);
+  }
+ }
+ const check=dialog.querySelector('input');check.checked=data.hidden;
+ dialog.querySelector('button').onclick=async e=>{
+  const btn=e.currentTarget;btn.disabled=true;
+  try{await window.pywebview.api.set_guide_hidden(check.checked);dialog.close()}
+  catch(error){btn.disabled=false;alert(error.message)}
+ };
+ dialog.onclose=()=>dialog.remove();document.body.append(dialog);dialog.showModal();
+ const updateFade=()=>dialog.classList.toggle('more',article.scrollHeight-article.clientHeight-article.scrollTop>1);
+ const observer=new ResizeObserver(updateFade);observer.observe(article);
+ article.addEventListener('scroll',updateFade,{passive:true});
+ dialog.addEventListener('close',()=>observer.disconnect(),{once:true});updateFade();
+}
+if(window.pywebview?.api?.guide)showGuide(true);
+else window.addEventListener('pywebviewready',()=>showGuide(true),{once:true});
+(function(){
+ const bar=document.querySelector('header'),veil=document.getElementById('veil');
+ if(!bar||!veil)return;
+ const sync=()=>{document.documentElement.style.setProperty('--hh',bar.getBoundingClientRect().height.toFixed(2)+'px')};
+ const update=()=>veil.classList.toggle('on',(document.scrollingElement||document.documentElement).scrollTop>4);
+ addEventListener('scroll',update,{passive:true});addEventListener('resize',()=>{sync();update()},{passive:true});sync();update();
+})();
+ (function(){
+  let natTop=null,natLeft=0,natW=0;
+  const fit=()=>{
+   const a=document.querySelector('.filter-sidebar');
+   if(!a||!a.isConnected){natTop=null;return}
+   const bar=document.querySelector('header');
+   const stick=(bar?bar.getBoundingClientRect().height:81)+84;
+   const y=(document.scrollingElement||document.documentElement).scrollTop;
+   const r=a.getBoundingClientRect();
+   const floating=a.classList.contains('floating');
+   if(!floating){natTop=r.top+y;natLeft=r.left;natW=r.width}
+   const on=y>natTop-stick-0.5;
+   if(on!==floating){
+    a.classList.toggle('floating',on);
+    if(on){a.style.left=natLeft+'px';a.style.width=natW+'px'}
+    else{a.style.left='';a.style.width='';a.style.top=''}
+   }
+   if(on){a.style.top=stick+'px';a.style.maxHeight=Math.max(260,innerHeight-stick-20)+'px'}
+   else{a.style.maxHeight=Math.max(260,innerHeight-a.getBoundingClientRect().top-20)+'px'}
+  };
+  addEventListener('scroll',fit,{passive:true});
+  addEventListener('resize',fit,{passive:true});
+  const main=document.querySelector('main');
+  if(main)new MutationObserver(fit).observe(main,{childList:true});
+  fit();
+ })();
+</script></html>
+
